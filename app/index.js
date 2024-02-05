@@ -3,12 +3,8 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const FileAccess = require("./fileAccess");
-const { v4: nanoid } = require("uuid");
-const multer = require("multer");
-const { uploadLimiter, downloadLimiter } = require("./middlewares");
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const { v4: uuid } = require("uuid");
+const { uploader, uploadLimiter, downloadLimiter } = require("./middlewares");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,8 +20,8 @@ app.use(bodyParser.json());
 const fileAccess = new FileAccess();
 
 // Endpoint for file upload
-app.post("/files", uploadLimiter, upload.single("file"), async (req, res) => {
-  const fileId = nanoid();
+app.post("/files", uploadLimiter, uploader.single("file"), async (req, res) => {
+  const fileId = uuid();
   const fileBuffer = req.file.buffer;
   const fileName = req.file.originalname;
   const { publicKey, privateKey, filePath } = await fileAccess.uploadFile(

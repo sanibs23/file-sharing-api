@@ -1,16 +1,32 @@
+const multer = require("multer");
 const rateLimit = require("express-rate-limit");
+
+const storage = multer.memoryStorage();
+/**
+ * Middleware for handling file uploads.
+ * @type {Function}
+ */
+const uploader = multer({ storage: storage });
+
+const config = {
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours window
+  legacyHeaders: false,
+  standardHeaders: true,
+  skipFailedRequests: true,
+  handler: (_, res, __, options) => {
+    return res.status(options.statusCode).send(options.message);
+  },
+};
 
 // Set up rate limiters for upload and download
 const uploadLimiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24 hours window
-  max: 1024 * 1024 * 50, // 50 MB upload limit per IP address per day
-  message: "Upload limit exceeded for this IP address",
+  ...config,
+  max: process.env.NODE_ENV === "test" ? 5 : 50, // Set the maximum upload limit based on the environment
 });
 
 const downloadLimiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24 hours window
-  max: 1024 * 1024, //* 100, // 100 MB download limit per IP address per day
-  message: "Download limit exceeded for this IP address",
+  ...config,
+  max: process.env.NODE_ENV === "test" ? 5 : 100,
 });
 
-module.exports = { uploadLimiter, downloadLimiter };
+module.exports = { uploader, uploadLimiter, downloadLimiter };

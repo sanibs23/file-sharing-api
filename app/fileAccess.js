@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { v4: nanoid } = require("uuid");
+const { v4: uuid } = require("uuid");
 const mime = require("mime-types");
 const path = require("path");
 const stream = require("stream");
@@ -31,18 +31,18 @@ class FileAccess {
   }
 
   /**
-   * Uploads a file with the given fileId and content.
-   * @param {string} fileId - The unique identifier for the file.
+   * Uploads a file with the given field and content.
+   * @param {string} field - The unique identifier for the file.
    * @param {string} content - The content of the file to be uploaded.
    * @returns {Object} - An object containing the public and private keys associated with the uploaded file.
    * @throws {Error} - If there is an error uploading the file.
    */
-  async uploadFile(fileId, content) {
+  async uploadFile(field, content) {
     await this.ensureRootFolder();
 
-    const publicKey = nanoid();
-    const privateKey = nanoid();
-    const filePath = path.join(this.rootFolder, fileId);
+    const publicKey = uuid();
+    const privateKey = uuid();
+    const filePath = path.join(this.rootFolder, field);
 
     fs.writeFileSync(filePath, content);
 
@@ -86,7 +86,6 @@ class FileAccess {
   async removeFileByPrivateKey(privateKey) {
     try {
       const fileData = this.getFileData(privateKey, "Private");
-      console.log(fileData);
       if (fileData) {
         await fs.promises.unlink(fileData.filePath);
         this.keyFileMap.delete(privateKey);

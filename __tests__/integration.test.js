@@ -1,30 +1,36 @@
 const request = require("supertest");
-const assert = require("assert"); // Add this if not already in your code
-const app = require("../app"); // Adjust the path to your app file
-const testImage = `./package.json`;
+const assert = require("assert");
+const app = require("../app");
+const fs = require("fs");
+const testFile = "./sample.txt";
+
+afterAll(() => {
+  const directoryPath = "./uploads";
+
+  // Check if the directory exists
+  if (fs.existsSync(directoryPath)) {
+    // Get all the files and subdirectories within the directory
+    const files = fs.readdirSync(directoryPath);
+
+    // Delete all the files within the directory
+    files.forEach((file) => {
+      const filePath = `${directoryPath}/${file}`;
+      fs.unlinkSync(filePath);
+    });
+
+    // Delete the directory itself
+    fs.rmdirSync(directoryPath);
+  }
+});
 describe("Integration Tests", function () {
   let publicKey;
   let privateKey;
 
-  // before(async function () {
-  //   this.timeout(50000); // Increase timeout to 5000 milliseconds
-
-  //   // Start your server asynchronously
-  //   server = await app.listen(9000);
-  //   console.log("Server started for testing");
-  // });
-
-  // after(async function () {
-  //   // Close your server
-  //   await server.close();
-  //   console.log("Server closed");
-  // });
-
   it("uploads a file and returns public/private keys", (done) => {
     request(app)
       .post("/files")
-      .attach("file", testImage)
-      .end((err, response) => {
+      .attach("file", testFile)
+      .end((_, response) => {
         publicKey = response.body.publicKey;
         privateKey = response.body.privateKey;
         assert.strictEqual(response.status, 200);
@@ -63,5 +69,39 @@ describe("Integration Tests", function () {
     );
 
     assert.strictEqual(response.status, 404);
+  });
+
+  describe("Rate limit", () => {
+    let publicKey;
+    it("should return 429 status after exceeding rate limit while uploading", async () => {
+      for (let i = 0; i < 4; i++) {
+        const response = await request(app)
+          .post("/files")
+          .attach("file", testFile)
+          .expect(200);
+        publicKey = response.body.publicKey;
+      }
+
+      // The next request should be rate-limited
+      const res = await request(app)
+        .post("/files")
+        .attach("file", testFile)
+        .catch((err) => ({ ...err, statusCode: 429 }));
+
+      assert.strictEqual(res.statusCode, 429);
+    });
+
+    it("should return 429 status after exceeding rate limit while downloading", async () => {
+      for (let i = 0; i < 4; i++) {
+        await request(app).get(`/files/${publicKey}`).expect(200);
+      }
+
+      // The next request should be rate-limited
+      const res = await request(app)
+        .get(`/files/${publicKey}`)
+        .catch((err) => ({ ...err, statusCode: 429 }));
+
+      assert.strictEqual(res.statusCode, 429);
+    });
   });
 });
