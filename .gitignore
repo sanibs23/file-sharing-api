@@ -1,0 +1,13 @@
+# Node.js
+node_modules/
+npm-debug.log
+npm-error.log
+
+# Uploads folder
+/uploads
+
+# Environment variables
+.env
+
+# Package lock
+package-lock.json
