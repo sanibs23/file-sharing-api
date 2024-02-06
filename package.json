@@ -1,7 +1,7 @@
 {
   "name": "file-sharing-api",
   "version": "1.0.0",
-  "description": "This a test project",
+  "description": "This a test project for file sharing platform using nodejs and expressjs",
   "main": "./app/index.js",
   "scripts": {
     "start": "node --env-file=.env --watch ./app/index.js",
@@ -20,7 +20,7 @@
     "expressjs",
     "backend"
   ],
-  "author": "sani071",
+  "author": "sanibs23",
   "license": "MIT",
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",
