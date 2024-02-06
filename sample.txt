@@ -1,1 +1,64 @@
-It is a simple test file.
+ class FileAccess {
+    constructor(rootFolder = process.env.FOLDER) {
+      // Existing code...
+      this.storage = new Storage();
+    }
+
+    // Existing methods...
+
+    /**
+     * Saves a file to Google Cloud Storage.
+     * @param {string} field - The unique identifier for the file.
+     * @param {string} content - The content of the file to be saved.
+     * @returns {Promise<string>} - A promise that resolves to the public URL of the saved file.
+     * @throws {Error} - If there is an error saving the file.
+     */
+    async saveFileToCloudStorage(field, content) {
+      try {
+        const bucketName = process.env.BUCKET_NAME;
+        const fileName = `${field}-${uuid()}`;
+        const file = this.storage.bucket(bucketName).file(fileName);
+
+        await file.save(content);
+
+        // Make the file publicly accessible
+        await file.makePublic();
+
+        const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+        return publicUrl;
+      } catch (error) {
+        throw new Error(`Error saving file to Google Cloud Storage: ${error}`);
+      }
+    }
+
+    /**
+     * Retrieves a file from Google Cloud Storage by its public URL.
+     * @param {string} publicUrl - The public URL of the file.
+     * @returns {Promise<{stream: ReadableStream, mimeType: string}> | null} - A promise that resolves to an object containing the file stream and MIME type, or null if the file does not exist.
+     */
+    async getFileFromCloudStorage(publicUrl) {
+      try {
+        const bucketName = process.env.BUCKET_NAME;
+        const fileName = publicUrl.replace(`https://storage.googleapis.com/${bucketName}/`, "");
+        const file = this.storage.bucket(bucketName).file(fileName);
+
+        const [exists] = await file.exists();
+        if (exists) {
+          const readStream = file.createReadStream();
+
+          // Get the MIME type of the file
+          const mimeType = mime.lookup(fileName);
+          const readableStream = new stream.Readable().wrap(readStream);
+
+          return { stream: readableStream, mimeType };
+        } else {
+          return null;
+        }
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    }
+
+    // Existing methods...
+  }

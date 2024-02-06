@@ -5,7 +5,15 @@
   "main": "./app/index.js",
   "scripts": {
     "start": "node --env-file=.env --watch ./app/index.js",
-    "test": "set NODE_ENV=test&& jest --setupFiles dotenv/config --testTimeout=5000"
+    "test": "set NODE_ENV=test&& jest --setupFiles dotenv/config --testTimeout=5000 --coverage"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "coverageDirectory": "coverage"
   },
   "keywords": [
     "nodejs",
@@ -15,6 +23,7 @@
   "author": "sani071",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/storage": "^7.7.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",

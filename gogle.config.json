@@ -1,0 +1,8 @@
+{
+  "provider": "google",
+  "googleCloudStorage": {
+    "projectId": "your-google-project-id",
+    "keyFilename": "/path/to/your/service-account-key.json",
+    "bucketName": "your-google-bucket-name"
+  }
+}

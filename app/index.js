@@ -16,16 +16,28 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+const provider = process.env.PROVIDER || "local"; // Default to local provider
 
-const fileAccess = new FileAccess();
+const fileAccess = new FileAccess(provider);
 
+const initialize = async () => {
+  try {
+    await fileAccess.initialize();
+    console.log("FileAccess component initialized successfully.");
+  } catch (error) {
+    console.error("Error initializing FileAccess component:", error);
+    process.exit(1);
+  }
+};
+
+initialize();
 // Endpoint for file upload
 app.post("/files", uploadLimiter, uploader.single("file"), async (req, res) => {
-  const fileId = uuid();
+  const field = uuid();
   const fileBuffer = req.file.buffer;
   const fileName = req.file.originalname;
   const { publicKey, privateKey, filePath } = await fileAccess.uploadFile(
-    fileId + fileName,
+    field + fileName,
     fileBuffer
   );
   return res.json({ publicKey, privateKey, filePath });
