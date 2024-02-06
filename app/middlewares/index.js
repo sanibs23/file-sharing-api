@@ -21,12 +21,12 @@ const config = {
 // Set up rate limiters for upload and download
 const uploadLimiter = rateLimit({
   ...config,
-  max: process.env.NODE_ENV === "test" ? 5 : 50, // Set the maximum upload limit based on the environment
+  max: process.env.NODE_ENV === "test" ? 5 : process.env.UPLOAD_LIMIT || 10, // Set the maximum upload limit based on the environment
 });
 
 const downloadLimiter = rateLimit({
   ...config,
-  max: process.env.NODE_ENV === "test" ? 5 : 100,
+  max: process.env.NODE_ENV === "test" ? 5 : process.env.UPLOAD_LIMIT || 100,
 });
 
 module.exports = { uploader, uploadLimiter, downloadLimiter };

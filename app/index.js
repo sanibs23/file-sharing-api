@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const FileAccess = require("./fileAccess");
+const FileAccess = require("./storage/fileAccess");
 const { v4: uuid } = require("uuid");
 const { uploader, uploadLimiter, downloadLimiter } = require("./middlewares");
 

@@ -1,12 +1,11 @@
 const request = require("supertest");
 const assert = require("assert");
-const app = require("../app");
+const app = require("../../app");
 const fs = require("fs");
-const testFile = "./sample.txt";
-
+const path = require("path");
+const testFile = path.join(__dirname, "../../package.json");
+const directoryPath = path.join(__dirname, "../../uploads");
 afterAll(() => {
-  const directoryPath = "./uploads";
-
   // Check if the directory exists
   if (fs.existsSync(directoryPath)) {
     // Get all the files and subdirectories within the directory
@@ -14,7 +13,9 @@ afterAll(() => {
 
     // Delete all the files within the directory
     files.forEach((file) => {
+      // console.log(file);
       const filePath = `${directoryPath}/${file}`;
+      // console.log(filePath);
       fs.unlinkSync(filePath);
     });
 
@@ -22,6 +23,7 @@ afterAll(() => {
     fs.rmdirSync(directoryPath);
   }
 });
+
 describe("Integration Tests", function () {
   let publicKey;
   let privateKey;

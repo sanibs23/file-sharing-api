@@ -1,11 +1,11 @@
 const { Readable } = require("stream");
 const mime = require("mime-types");
 const { v4: uuid } = require("uuid");
-const LocalFileAccess = require("../app/localFileStorage");
+const LocalFileAccess = require("../../app/storage/localFileStorage");
 const fs = require("fs");
 const path = require("path");
 
-const testFilePath = path.join(__dirname, "../package.json");
+const testFilePath = path.join(__dirname, "../../package.json");
 const testFile = fs.readFileSync(testFilePath);
 
 describe("LocalFileAccess", () => {
@@ -77,6 +77,7 @@ describe("LocalFileAccess", () => {
       expect(result).toHaveProperty("filePath");
       expect(result).toHaveProperty("isPublic");
     });
+
     it("should return file data if file exists for private key", async () => {
       const field = uuid();
       const { privateKey } = await fileAccess.uploadFile(field, testFile);

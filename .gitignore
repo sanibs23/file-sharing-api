@@ -8,6 +8,7 @@ npm-error.log
 
 # Environment variables
 .env
-
+# test covarage
+coverage
 # Package lock
 package-lock.json
