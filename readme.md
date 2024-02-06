@@ -72,6 +72,10 @@ The unit tests and integrations tests are written using the Jest testing framewo
 - `getFileData`: Tests the retrieval of file data by either the public or private key and verifies that the returned file data is correct.
 - `cleanup`: Tests the cleanup functionality of the API and verifies that files older than 7 days are successfully removed
 
+## Postman collection
+
+- [File-sharing-api-collection](https://api.postman.com/collections/7635645-be17de0a-6a25-4e8a-a587-e09056380c1a?access_key=PMAT-01HNZSMDGHPERWHARWYDKQ4SR8)
+
 ## NB
 
 - The testing of Google Cloud Storage functionalities was not included in the test cases as I do not have a Google Cloud account. Therefore, those functionalities were not tested. Thank you.
