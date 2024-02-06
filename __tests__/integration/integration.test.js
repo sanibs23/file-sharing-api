@@ -28,6 +28,12 @@ describe("Integration Tests", function () {
   let publicKey;
   let privateKey;
 
+  it("should return status 200 and 'Server is running' message on /status endpoint", async () => {
+    const response = await request(app).get("/status");
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("Server is running");
+  });
+
   it("uploads a file and returns public/private keys", (done) => {
     request(app)
       .post("/files")

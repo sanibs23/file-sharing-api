@@ -31,6 +31,11 @@ const initialize = async () => {
 };
 
 initialize();
+// Endpoint for health check
+app.get("/status", (_, res) => {
+  return res.json({ message: "Server is running" });
+});
+
 // Endpoint for file upload
 app.post("/files", uploadLimiter, uploader.single("file"), async (req, res) => {
   const field = uuid();
