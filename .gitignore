@@ -12,3 +12,6 @@ npm-error.log
 coverage
 # Package lock
 package-lock.json
+
+#vscode
+.vscode
